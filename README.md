@@ -3,7 +3,8 @@
 <p align="center">
   <figure style="display: inline-block; margin: 1px;">
     <img src="images/display/input.png" alt="Content Image" width="800" height="250"/>
-    <figcaption>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Content Image &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;style image</figcaption>
+    <figcaption>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Content Image &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+     Style image</figcaption>
   </figure>
 <br></br>
   <figure style="display: inline-block; margin: 1px;">
@@ -14,7 +15,9 @@
 
 
 
-This project is a pytorch implementation of the paper [Rethinking Style Transfer: From Pixels to Parameterized Brushstrokes](https://arxiv.org/abs/2103.17185).This paper was originally implemented in TensorFlow and reproduced in Pytorch for research purposes. Even though there is a another [pytorch implementation](https://github.com/justanhduc/brushstroke-parameterized-style-transfer), it is not accurate. The results of this repo are very close to the original paper.  
+This project is a pytorch implementation of the paper [Rethinking Style Transfer: From Pixels to Parameterized Brushstrokes](https://arxiv.org/abs/2103.17185).This paper was originally implemented in TensorFlow and reproduced in Pytorch for research purposes.  The results of this repo are very close to the original paper.
+
+<!-- Even though there is a another [pytorch implementation](https://github.com/justanhduc/brushstroke-parameterized-style-transfer), it is not accurate.   -->
 
 ## Installation
 
@@ -38,7 +41,7 @@ You can change default settings in the `main.py` file for things like canvas col
 ## References
 [Tensorflow implementation](https://github.com/CompVis/brushstroke-parameterized-style-transfer)
 
-[Pytorch implementation](https://github.com/justanhduc/brushstroke-parameterized-style-transfer)
+[Another Pytorch implementation](https://github.com/justanhduc/brushstroke-parameterized-style-transfer) (There results are not accurate compared to the original implementaion)
 
 ## Citation
 ```

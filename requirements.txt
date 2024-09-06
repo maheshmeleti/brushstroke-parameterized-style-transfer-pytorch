@@ -1,0 +1,19 @@
+
+einops             0.8.0
+imageio            2.34.1
+ipykernel          6.29.4
+ipython            8.24.0
+matplotlib         3.9.0
+numpy              1.26.4
+opencv-python      4.9.0.80
+pandas             2.2.2
+pillow             10.3.0
+scikit-image       0.23.2
+scikit-learn       1.5.0
+scipy              1.13.1
+torch              2.2.1
+torch_cluster      1.6.3
+torch_geometric    2.5.3
+torchaudio         2.2.1
+torchdata          0.7.1
+torchvision        0.17.1

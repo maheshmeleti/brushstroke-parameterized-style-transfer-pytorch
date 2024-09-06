@@ -12,6 +12,7 @@ import pdb
 from PIL import Image
 import numpy as np
 import cv2
+import argparse
 
 vgg_weight_file = '/scratch/umeleti/code/style/pytorch_brushstroke/brushstroke-parameterized-style-transfer/vgg_weights/vgg19_weights_normalized.h5'
 
@@ -67,35 +68,40 @@ def run_stroke_style_transfer(num_steps=100, style_weight=3., content_weight=1.,
     with torch.no_grad():
         return bs_renderer()
 
-if __name__ == '__main__':
-    device = 'cuda'
+# if __name__ == '__main__':
+device = 'cuda'
 
-    content_img_file = '/scratch/umeleti/code/style/pytorch_brushstroke/brushstroke-parameterized-style-transfer/images/golden-gate-bridge.jpg'
-    style_img_file = '/scratch/umeleti/code/style/pytorch_brushstroke/brushstroke-parameterized-style-transfer/images/starry_night.jpg'
-    # content_img_file = style_img_file
+parser = argparse.ArgumentParser()
+parser.add_argument('--content', type=str, required=True, help='Content image name')
+parser.add_argument('--style', type=str, required=True, help='Style image name')
+parser.add_argument('--nstrokes', type=int, required=True, help='Number of brush strokes')
+args = parser.parse_args()
 
-    #output_name = f'{os.path.basename(content_img_file).split(".")[0]}-{os.path.basename(style_img_file).split(".")[0]}'
-    output_name = 'result.png'
-    
-    imsize = 512
-    content_img = utils.image_loader(content_img_file, imsize, device)
-    style_img = utils.image_loader(style_img_file, 224, device)
+imgs_path = '/images/'
+content_img_file = os.path.join(imgs_path, args.content)
+style_img_file = os.path.join(imgs_path, args.style)
+#output_name = f'{os.path.basename(content_img_file).split(".")[0]}-{os.path.basename(style_img_file).split(".")[0]}'
+output_name = 'result.png'
 
-    canvas_color =  'gray'
-    num_strokes = 10000
-    samples_per_curve = 20
-    brushes_per_pixel = 20
-    _, _, H, W = content_img.shape
-    canvas_height = H
-    canvas_width = W
-    length_scale = 1.1
-    width_scale = 0.1
+imsize = 512
+content_img = utils.image_loader(content_img_file, imsize, device)
+style_img = utils.image_loader(style_img_file, 224, device)
 
-    canvas = run_stroke_style_transfer()
+canvas_color =  'gray'
+num_strokes = args.nstrokes
+samples_per_curve = 20
+brushes_per_pixel = 20
+_, _, H, W = content_img.shape
+canvas_height = H
+canvas_width = W
+length_scale = 1.1
+width_scale = 0.1
 
-    np_array = canvas.detach().cpu().numpy()
-    # np_array_ = (np_array - np.min(np_array))/(np.max(np_array)-np.min(np_array))*255
-    np_array_ = np.clip(np_array, 0, 1)
-    image = Image.fromarray(np.uint8(np_array_*255.0))
-    image.save(output_name)
-    # cv2.imwrite(output_name, np_array_[:,:,::-1])
+canvas = run_stroke_style_transfer()
+
+np_array = canvas.detach().cpu().numpy()
+# np_array_ = (np_array - np.min(np_array))/(np.max(np_array)-np.min(np_array))*255
+np_array_ = np.clip(np_array, 0, 1)
+image = Image.fromarray(np.uint8(np_array_*255.0))
+image.save(output_name)
+# cv2.imwrite(output_name, np_array_[:,:,::-1])

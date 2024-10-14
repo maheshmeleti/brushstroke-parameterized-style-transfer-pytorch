@@ -41,7 +41,7 @@ You can change default settings in the `main.py` file for things like canvas col
 ## References
 [Tensorflow implementation](https://github.com/CompVis/brushstroke-parameterized-style-transfer)
 
-[Another Pytorch implementation](https://github.com/justanhduc/brushstroke-parameterized-style-transfer) (There results are not accurate compared to the original implementaion)
+<!-- [Another Pytorch implementation](https://github.com/justanhduc/brushstroke-parameterized-style-transfer) (There results are not accurate compared to the original implementaion) -->
 
 ## Citation
 ```

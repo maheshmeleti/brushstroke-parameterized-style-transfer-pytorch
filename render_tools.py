@@ -104,6 +104,8 @@ def renderer(curve_points: torch.Tensor, locations: torch.Tensor, colors: torch.
     canvas_with_nearest_Bs_b =  canvas_with_nearest_Bs[:,:,:,1:S,:]# end points of each line segments
     canvas_with_nearest_Bs_b_a = canvas_with_nearest_Bs_b - canvas_with_nearest_Bs_a #[H, W, N, S - 1, 2]
 
+    #pdb.set_trace()
+    
     P_full_canvas_with_nearest_Bs_a = P_full.unsqueeze(-2).unsqueeze(-2) - canvas_with_nearest_Bs_a
     t = torch.sum(canvas_with_nearest_Bs_b_a * P_full_canvas_with_nearest_Bs_a, axis = -1) / torch.sum(torch.square(canvas_with_nearest_Bs_b_a), axis=-1)
     t = t.clamp(min=0, max=1)
@@ -171,18 +173,20 @@ class BrushStrokeRenderer(nn.Module):
         self.width = torch.nn.Parameter(torch.from_numpy(np.array(width, 'float32')), requires_grad=True)
 
     def forward(self):
-        t1 = time.time()
+        #t1 = time.time()
         curve_points = sample_quadratic_bezier_curve(s=self.curve_s + self.location,
                                                      e=self.curve_e + self.location,
                                                      c=self.curve_c + self.location,
                                                      num_points=self.samples_per_curve)
         
         
+        # renderer(curve_points: torch.Tensor, locations: torch.Tensor, colors: torch.Tensor, widths: torch.Tensor,
+        #             H: int, W: int, K: int, canvas_color: float)
         canvas = renderer(curve_points, self.location, self.color, self.width,
                                  self.canvas_height, self.canvas_width, self.strokes_per_pixel, self.canvas_color)
         
-        t2 = time.time()
-        print(t2-t1)
-        pdb.set_trace()
+        #t2 = time.time()
+        #print(t2-t1)
+        #pdb.set_trace()
 
         return canvas

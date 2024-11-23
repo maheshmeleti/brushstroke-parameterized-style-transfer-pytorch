@@ -14,7 +14,7 @@ import numpy as np
 import cv2
 import argparse
 
-vgg_weight_file = '/scratch/umeleti/code/style/pytorch_brushstroke/brushstroke-parameterized-style-transfer/vgg_weights/vgg19_weights_normalized.h5'
+vgg_weight_file = './vgg_weights/vgg19_weights_normalized.h5'
 
 # desired depth layers to compute style/content losses :
 bs_content_layers = ['conv4_1', 'conv5_1']
@@ -22,7 +22,7 @@ bs_style_layers = ['conv1_1', 'conv2_1', 'conv3_1', 'conv4_1', 'conv5_1']
 px_content_layers = ['conv1_1', 'conv2_1', 'conv3_1', 'conv4_1', 'conv5_1']
 px_style_layers = ['conv1_1', 'conv2_1', 'conv3_1', 'conv4_1', 'conv5_1']
 
-def run_stroke_style_transfer(num_steps=100, style_weight=3., content_weight=1., tv_weight=0.008, curv_weight=4):
+def run_stroke_style_transfer(num_steps=100, style_weight=3., content_weight=2., tv_weight=0.008, curv_weight=4):
     vgg_loss = losses.StyleTransferLosses(vgg_weight_file, content_img, style_img,
                                           bs_content_layers, bs_style_layers, scale_by_y=True)
     vgg_loss.to(device).eval()
@@ -57,16 +57,34 @@ def run_stroke_style_transfer(num_steps=100, style_weight=3., content_weight=1.,
         style_score.backward(inputs=[bs_renderer.color])
         optimizer_color.step()
 
-        # plot some stuffs
-        # mon.plot('stroke style loss', style_score.item())
-        # mon.plot('stroke content loss', content_score.item())
-        # mon.plot('stroke tv loss', tv_score.item())
-        # mon.plot('stroke curvature loss', curv_score.item())
-        # if mon.iter % mon.print_freq == 0:
-        #     mon.imwrite('stroke stylized', input_img)
 
     with torch.no_grad():
         return bs_renderer()
+
+def run_style_transfer(input_img: torch.Tensor, num_steps=1000, style_weight=10000., content_weight=1., tv_weight=0):
+    content_img_resized = F.resize(content_img, 1024)
+
+    # input_img = input_img.detach()[None].permute(0, 3, 1, 2).contiguous()
+    input_img = F.resize(input_img, 1024)
+    input_img = torch.nn.Parameter(input_img, requires_grad=True)
+
+    vgg_loss = losses.StyleTransferLosses(vgg_weight_file, content_img_resized, style_img,
+                                          px_content_layers, px_style_layers)
+    vgg_loss.to(device).eval()
+    optimizer = optim.Adam([input_img], lr=1e-3)
+    for _ in tqdm(range(num_steps)):
+        optimizer.zero_grad()
+        input = torch.clamp(input_img, 0., 1.)
+        content_score, style_score = vgg_loss(input)
+
+        style_score *= style_weight
+        content_score *= content_weight
+        tv_score = 0. if not tv_weight else tv_weight * losses.tv_loss(input_img)
+        loss = style_score + content_score + tv_score
+        loss.backward(inputs=[input_img])
+        optimizer.step()
+
+    return torch.clamp(input_img, 0., 1.)
 
 # if __name__ == '__main__':
 device = 'cuda'
@@ -77,31 +95,38 @@ parser.add_argument('--style', type=str, required=True, help='Style image name')
 parser.add_argument('--nstrokes', type=int, required=True, help='Number of brush strokes')
 args = parser.parse_args()
 
-imgs_path = '/images/'
+imgs_path = './images/'
 content_img_file = os.path.join(imgs_path, args.content)
 style_img_file = os.path.join(imgs_path, args.style)
 #output_name = f'{os.path.basename(content_img_file).split(".")[0]}-{os.path.basename(style_img_file).split(".")[0]}'
-output_name = 'result.png'
+output_name = f'{args.content}+_+{args.style}+_{args.nstrokes}.png'
 
 imsize = 512
 content_img = utils.image_loader(content_img_file, imsize, device)
-style_img = utils.image_loader(style_img_file, 224, device)
+style_img = utils.image_loader(style_img_file, imsize, device)
 
 canvas_color =  'gray'
 num_strokes = args.nstrokes
 samples_per_curve = 20
-brushes_per_pixel = 20
+brushes_per_pixel = 40
 _, _, H, W = content_img.shape
 canvas_height = H
 canvas_width = W
 length_scale = 1.1
 width_scale = 0.1
 
-canvas = run_stroke_style_transfer()
+# canvas = run_stroke_style_transfer()
 
-np_array = canvas.detach().cpu().numpy()
+# pdb.set_trace()
+output = run_style_transfer(content_img)
+
+output = output.squeeze(0).squeeze(0)
+output = output.permute(1, 2, 0)
+np_array = output.detach().cpu().numpy()
 # np_array_ = (np_array - np.min(np_array))/(np.max(np_array)-np.min(np_array))*255
 np_array_ = np.clip(np_array, 0, 1)
 image = Image.fromarray(np.uint8(np_array_*255.0))
+output_name = 'style_transfer.jpg'
+output_name = os.path.join('results', output_name)
 image.save(output_name)
 # cv2.imwrite(output_name, np_array_[:,:,::-1])
